@@ -1,1 +1,4 @@
-pygame==2.6.1
+pygame
+numpy
+gspread
+google-auth
