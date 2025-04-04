@@ -37,6 +37,9 @@ class GoogleSheetsLogger:
             'timestamps': []
         }
         
+        # Flag to track if a game has actually started
+        self.game_started = False
+        
         # Master spreadsheet ID from config
         self.master_spreadsheet_id = MASTER_SPREADSHEET_ID
         
@@ -129,6 +132,10 @@ class GoogleSheetsLogger:
         }
         # Record start time
         self.start_time = datetime.now()
+        
+        # Reset game started flag
+        self.game_started = False
+        
         # Remove the game_saved attribute to allow saving
         if hasattr(self, 'game_saved'):
             delattr(self, 'game_saved')
@@ -145,6 +152,9 @@ class GoogleSheetsLogger:
             snake_positions: List of snake segment positions
             food_position: Food position tuple
         """
+        # Mark that the game has started
+        self.game_started = True
+        
         # Add move data to the game data collection
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
@@ -163,6 +173,11 @@ class GoogleSheetsLogger:
     
     def save_game_data(self):
         """Save all the game data to Google Sheets when the game is complete."""
+        # Only save if a game has actually started
+        if not self.game_started:
+            print("No game data to save.")
+            return False
+        
         if not self.spreadsheet:
             print("Spreadsheet not available. Game data not saved.")
             return False
@@ -250,7 +265,7 @@ class GoogleSheetsLogger:
     def close(self):
         """Save game data and perform cleanup."""
         try:
-            if len(self.game_data['moves']) > 0:
+            if self.game_started and len(self.game_data['moves']) > 0:
                 self.save_game_data()
         except Exception as e:
             print(f"Error in close method: {e}")
