@@ -5,6 +5,7 @@ from datetime import datetime
 import os
 import socket
 import uuid
+import sys
 from config import SERVICE_ACCOUNT_FILE, BUFFER_SIZE, MASTER_SPREADSHEET_ID
 
 # Google Sheets Scopes
@@ -15,8 +16,8 @@ SCOPES = [
 
 class GoogleSheetsLogger:
     def __init__(self, spreadsheet_name=None):
-        # Path to your service account file
-        self.service_account_file = SERVICE_ACCOUNT_FILE
+        # Get the correct path for service account file
+        self.service_account_file = self._get_resource_path(SERVICE_ACCOUNT_FILE)
         self.spreadsheet = None
         self.sheet = None
         self.client = None
@@ -42,6 +43,29 @@ class GoogleSheetsLogger:
         
         # Master spreadsheet ID from config
         self.master_spreadsheet_id = MASTER_SPREADSHEET_ID
+    
+    def _get_resource_path(self, relative_path):
+        """Get absolute path to resource, works for dev and for PyInstaller"""
+        try:
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+        
+        # Log the paths for debugging
+        abs_path = os.path.join(base_path, relative_path)
+        print(f"Base path: {base_path}")
+        print(f"Relative path: {relative_path}")
+        print(f"Full path: {abs_path}")
+        print(f"Path exists: {os.path.exists(abs_path)}")
+        
+        # List directory contents for debugging
+        try:
+            print(f"Directory contents: {os.listdir(base_path)}")
+        except Exception as e:
+            print(f"Error listing directory: {e}")
+            
+        return abs_path
         
     def setup(self):
         """
@@ -49,18 +73,38 @@ class GoogleSheetsLogger:
         Returns True if successful, False otherwise.
         """
         try:
+            # Log the current working directory
+            print(f"Current working directory: {os.getcwd()}")
             
             # Check if service account file exists
             if not os.path.exists(self.service_account_file):
                 print(f"Service account file '{self.service_account_file}' not found.")
-                return False
+                # Try to find the file in the current directory
+                alt_path = os.path.join(os.getcwd(), SERVICE_ACCOUNT_FILE)
+                print(f"Trying alternative path: {alt_path}")
+                if os.path.exists(alt_path):
+                    print(f"Found service account file at alternative path!")
+                    self.service_account_file = alt_path
+                else:
+                    print(f"Service account file not found at alternative path either.")
+                    return False
                 
             # Set up credentials
-            creds = Credentials.from_service_account_file(
-                self.service_account_file, scopes=SCOPES)
+            try:
+                creds = Credentials.from_service_account_file(
+                    self.service_account_file, scopes=SCOPES)
+                print("Credentials loaded successfully")
+            except Exception as e:
+                print(f"Error loading credentials: {e}")
+                return False
             
             # Create client
-            self.client = gspread.authorize(creds)
+            try:
+                self.client = gspread.authorize(creds)
+                print("Google client authorized successfully")
+            except Exception as e:
+                print(f"Error authorizing client: {e}")
+                return False
             
             try:
                 # Open the central master spreadsheet by ID
@@ -104,6 +148,7 @@ class GoogleSheetsLogger:
             print(f"Error setting up Google Sheets: {e}")
             return False
     
+    # The rest of your methods remain the same
     def _create_board_states_headers(self):
         """Set up headers for the board states worksheet."""
         headers = ["Player ID", "Game ID", "Move Number", "Board State", 

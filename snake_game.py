@@ -157,27 +157,6 @@ class SnakeGame:
                 # Check minimize button
                 if self.minimize_rect.collidepoint(event.pos):
                     pygame.display.iconify()
-                
-                # Start dragging if clicked on title bar
-                if self.title_rect.collidepoint(event.pos):
-                    self.dragging = True
-                    mouse_x, mouse_y = event.pos
-                    window_x, window_y = pygame.display.get_window_position()
-                    self.drag_offset = (mouse_x - window_x, mouse_y - window_y)
-            
-            # Handle mouse up to stop dragging
-            if event.type == pygame.MOUSEBUTTONUP:
-                self.dragging = False
-            
-            # Handle mouse motion for dragging
-            if event.type == pygame.MOUSEMOTION:
-                if self.dragging:
-                    mouse_x, mouse_y = event.pos
-                    pygame.display.set_mode((WIDTH, HEIGHT + 30), pygame.NOFRAME)
-                    pygame.display.move_window(
-                        mouse_x - self.drag_offset[0], 
-                        mouse_y - self.drag_offset[1]
-                    )
             
             # Game-specific events
             if event.type == pygame.KEYDOWN:
