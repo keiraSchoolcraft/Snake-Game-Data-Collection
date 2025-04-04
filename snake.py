@@ -3,7 +3,7 @@ import random
 import time
 
 # Constants
-GRID_SIZE = 13
+GRID_SIZE = 16
 CELL_SIZE = 30
 WIDTH = GRID_SIZE * CELL_SIZE
 HEIGHT = GRID_SIZE * CELL_SIZE
@@ -13,7 +13,7 @@ class SnakeGame:
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
-        pygame.display.set_caption("13x13 Snake Game")
+        pygame.display.set_caption("16x16 Snake Game")
         self.clock = pygame.time.Clock()
         self.running = False
         self.reset_game()
