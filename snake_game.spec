@@ -39,30 +39,29 @@ a = Analysis(
     noarchive=False
 )
 
-# Don't manually extend datas - this was likely causing the error
-
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 
+# Single-file build - include all binaries, data, and zip files in the EXE itself
 exe = EXE(
     pyz,
     a.scripts,
+    a.binaries,          # Include binaries in the EXE
+    a.zipfiles,          # Include zipfiles in the EXE
+    a.datas,             # Include data in the EXE
     [],
-    exclude_binaries=True,
     name='SnakeGame',
-    debug=True,  # Enable debug for troubleshooting
+    debug=True,          # Enable debug for troubleshooting
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    console=True  # Set to True for debugging to see output
+    upx_exclude=[],
+    runtime_tmpdir=None, # Store temporary files in memory
+    console=False,        # Set to True for debugging, False for final release
+    disable_windowed_traceback=False,
+    argv_emulation=False,
+    target_arch=None,
+    codesign_identity=None,
+    entitlements_file=None,
 )
 
-coll = COLLECT(
-    exe,
-    a.binaries,
-    a.zipfiles,
-    a.datas,
-    strip=False,
-    upx=True,
-    upx_exclude=[],
-    name='SnakeGame'
-)
+# Note: The COLLECT section is removed entirely for a single-file build
