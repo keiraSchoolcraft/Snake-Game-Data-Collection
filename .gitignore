@@ -34,3 +34,5 @@ service_account.json
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+/training_logs
