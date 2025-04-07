@@ -328,10 +328,10 @@ class DQNAgent:
         batch = Experience(*zip(*experiences))
         
         # Convert to appropriate tensor shapes
-        state_batch = torch.FloatTensor(batch.state).to(self.device)
+        state_batch = torch.FloatTensor(np.array(batch.state, dtype=np.float32)).to(self.device)
         action_batch = torch.LongTensor(batch.action).unsqueeze(1).to(self.device)
         reward_batch = torch.FloatTensor(batch.reward).unsqueeze(1).to(self.device)
-        next_state_batch = torch.FloatTensor(batch.next_state).to(self.device)
+        next_state_batch = torch.FloatTensor(np.array(batch.next_state, dtype=np.float32)).to(self.device)
         done_batch = torch.FloatTensor(batch.done).unsqueeze(1).to(self.device)
         
         # Compute Q(s_t, a) - the model computes Q(s_t), then we select the columns of actions taken
