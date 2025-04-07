@@ -67,7 +67,7 @@ class SnakeGameRLWrapper(gym.Env):
         
         # Tracking variables
         self.steps_without_food = 0
-        self.max_steps_without_food = 200
+        self.max_steps_without_food = 100
         self.previous_distance = None
     
     def reset(self, seed=None):
@@ -221,9 +221,7 @@ class SnakeGameRLWrapper(gym.Env):
         # 4. Starvation penalty - penalty for not finding food for too long
         if self.steps_without_food > self.max_steps_without_food:
             reward -= 0.5
-            # Move food to a new location if snake is struggling to find it
-            self.game.food = self._generate_random_food()
-            self.steps_without_food = 0
+
         
         # 5. Death penalty - penalty for dying
         if done:
