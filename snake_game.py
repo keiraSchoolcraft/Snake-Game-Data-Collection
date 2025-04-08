@@ -40,10 +40,12 @@ class SnakeGame:
         # Track window dragging
         self.dragging = False
         self.drag_offset = (0, 0)
+
+        self.logging_enabled = False
         
-        # Initialize Google Sheets logger
-        self.logger = GoogleSheetsLogger()
-        self.logging_enabled = self.logger.setup()
+        if self.logging_enabled:
+                    self.logger = GoogleSheetsLogger()
+                    self.logging_enabled = self.logger.setup()
         
         self.reset_game()
     
