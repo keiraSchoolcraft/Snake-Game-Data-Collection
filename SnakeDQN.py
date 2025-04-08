@@ -365,7 +365,7 @@ class DQNAgent:
         
         return loss.item()
 
-def train_dqn(env, agent, num_episodes=10000):
+def train_dqn(env, agent, num_episodes=100000):
     """Train the agent using DQN algorithm with no step limit"""
     # Create logs directory
     os.makedirs('training_logs', exist_ok=True)
@@ -422,7 +422,7 @@ def train_dqn(env, agent, num_episodes=10000):
         episode_scores.append(env.game.score)
         
 
-        save_every = 1000
+        save_every = 10000
         # Periodic logging and saving
         if (episode + 1) % save_every == 0:
             current_time = time.time()
@@ -627,7 +627,7 @@ def main():
     if mode == 'train':
         print("Starting training with DQN...")
         # Train the agent
-        rewards, lengths, losses, scores = train_dqn(env, agent, num_episodes=10000)
+        rewards, lengths, losses, scores = train_dqn(env, agent, num_episodes=100000)
         
         # Save final training metrics
         np.savez('training_logs/final_training_metrics.npz', 
