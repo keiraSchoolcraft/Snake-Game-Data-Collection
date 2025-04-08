@@ -41,7 +41,7 @@ class SnakeGame:
         self.dragging = False
         self.drag_offset = (0, 0)
 
-        self.logging_enabled = False
+        self.logging_enabled = True
         
         if self.logging_enabled:
                     self.logger = GoogleSheetsLogger()
