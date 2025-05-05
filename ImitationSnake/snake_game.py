@@ -18,7 +18,7 @@ class SnakeGame:
         if self.ai_mode:
             try:
                 #self.model = load_model("snake_cnn_model2.keras")
-                self.model = load_model("snake_cnn_model2.keras")
+                self.model = load_model("snake_cnn_model.keras")
                 print("AI model loaded successfully")
             except Exception as e:
                 print(f"Failed to load AI model: {e}")
@@ -59,41 +59,6 @@ class SnakeGame:
         self.base_speed = FPS_BASE  # Starting with a slower speed
         self.score = 0      # Initialize score
         self.move_count = 0
-        
-    def get_ai_direction2(self):
-        """Get direction from the AI model, preventing 180° turns"""
-        # Get current board state
-        board_state = self.get_board_state()
-        
-        # Prepare input for model (add batch and channel dimensions)
-        input_data = board_state.reshape(1, 16, 16, 1).astype('float32')
-        
-        # Get model prediction
-        prediction = self.model.predict(input_data, verbose=0)[0]
-        
-        # Define direction mapping and opposite directions
-        direction_map = {0: "UP", 1: "RIGHT", 2: "DOWN", 3: "LEFT"}
-        opposite_directions = {"UP": "DOWN", "DOWN": "UP", "LEFT": "RIGHT", "RIGHT": "LEFT"}
-        
-        # Get current opposite direction to exclude
-        current_opposite = opposite_directions[self.direction]
-        
-        # Create a mask to exclude the opposite direction
-        valid_directions = [i for i, dir_name in direction_map.items() 
-                        if dir_name != current_opposite]
-        
-        # Only consider valid directions
-        valid_predictions = [prediction[i] for i in valid_directions]
-        
-        if not valid_predictions:  # Shouldn't happen but just in case
-            print("tried to go backwards!")
-            return self.direction
-        
-        # Get the best valid direction
-        best_valid_idx = np.argmax(valid_predictions)
-        best_direction = direction_map[valid_directions[best_valid_idx]]
-        
-        return best_direction
     
     def get_ai_direction(self):
         """Get direction from the AI model with proper 180° prevention"""
