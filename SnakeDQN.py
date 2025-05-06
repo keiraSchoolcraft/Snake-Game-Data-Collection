@@ -125,10 +125,10 @@ class SnakeGameRLWrapper(gym.Env):
         norm_food_y = (food_y / (GRID_SIZE - 1)) * 2 - 1
         
         # Calculate danger in each direction (0 = safe, 1 = danger)
-        danger_up = 1.0 if self._is_collision(head_x, head_y - 1) else 0.0
-        danger_right = 1.0 if self._is_collision(head_x + 1, head_y) else 0.0
-        danger_down = 1.0 if self._is_collision(head_x, head_y + 1) else 0.0
-        danger_left = 1.0 if self._is_collision(head_x - 1, head_y) else 0.0
+        danger_up = 1.0 if self._is_collision(head_x, head_y - 1) or self._is_collision(head_x, head_y - 2) else 0.0
+        danger_right = 1.0 if self._is_collision(head_x + 1, head_y) or self._is_collision(head_x + 2, head_y) else 0.0
+        danger_down = 1.0 if self._is_collision(head_x, head_y + 1) or self._is_collision(head_x, head_y + 2) else 0.0
+        danger_left = 1.0 if self._is_collision(head_x - 1, head_y) or self._is_collision(head_x - 2, head_y) else 0.0
         
         # Current direction
         dir_up = 1.0 if self.game.direction == "UP" else 0.0
@@ -225,7 +225,7 @@ class SnakeGameRLWrapper(gym.Env):
         
         # 5. Death penalty - penalty for dying
         if done:
-            reward -= 1.0
+            reward -= (1.0 * (1.0 - (self.game.score)/256))
         
         # Update previous distance for next step
         self.previous_distance = current_distance
